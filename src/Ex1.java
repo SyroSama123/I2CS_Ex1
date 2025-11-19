@@ -90,11 +90,26 @@ public class Ex1 {
      */
     public static String poly(double[] poly) {
         String ans = "";
-        if(poly.length==0) {ans="0";}
-        else {
-            /** add you code below
+        int l = poly.length;
+        if(l==0) {
+            ans="0";
+        }
 
-             /////////////////// */
+        else {
+            for(int i=1; i <= l; i++) {
+                if(i<l) {
+                    if(poly[l - i - 1] > 0) {
+                        ans += poly[l - i] + "x^" + (l-i) + " +";
+                    }
+                    else if (poly[l - i - 1] < 0) {
+                        ans += poly[l - i] + "x^" + (l-i) + " ";
+                    }
+                }
+                else {
+                    ans += poly[0];
+                }
+
+            }
         }
         return ans;
     }
@@ -109,7 +124,30 @@ public class Ex1 {
      * @return an x value (x1<=x<=x2) for which |p1(x) - p2(x)| < eps.
      */
     public static double sameValue(double[] p1, double[] p2, double x1, double x2, double eps) {
-        double ans = x1;
+        double ans;
+        double x_1 = Math.min(x1, x2), x_2 = Math.max(x1, x2);
+        double deltaY1 = Math.abs( f(p1, x_1) - f(p2, x_1) ), deltaY2 = Math.abs( f(p1, x_2) - f(p2, x_2) );
+
+        if(deltaY1 > deltaY2) {
+            ans = x_1;
+            for(int i=0; ans <= x_2; i++) {
+                ans = x_1 + (i * eps);
+                double absDelta = Math.abs(f(p1, ans) - f(p2, ans));
+                if(absDelta < eps) {
+                    return ans;
+                }
+            }
+        }
+        else {
+            ans = x_2;
+            for(int i=0; ans >= x_1; i--) {
+                ans = x_1 + (i * eps);
+                double absDelta = Math.abs(f(p1, ans) - f(p2, ans));
+                if(absDelta < eps) {
+                    return ans;
+                }
+            }
+        }
 
 
         return ans;

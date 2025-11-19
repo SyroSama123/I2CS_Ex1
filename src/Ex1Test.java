@@ -18,7 +18,24 @@ class Ex1Test {
 	static double[] po1 = {2,2}, po2 = {-3, 0.61, 0.2};;
 	static double[] po3 = {2,1,-0.7, -0.02,0.02};
 	static double[] po4 = {-3, 0.61, 0.2};
-	
+
+    @Test
+    /**
+     * My test -- remove this line before submitting
+     *
+     * Tests that Poly() returns correct string.
+     */
+    void testPoly() {
+        double[] p1 = {9.0, 7.3, -2.0, 4.0, -13.25};
+        String polyStr = "-13.25x^4 +4.0x^3 -2.0x^2 +7.3x^1 +9.0";
+
+        String p1Str = Ex1.poly(p1);
+
+        if(!p1Str.equals(polyStr)) {
+            fail("Strings not equal");
+        }
+    }
+
  	@Test
 	/**
 	 * Tests that f(x) == poly(x).

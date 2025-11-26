@@ -62,9 +62,8 @@ public class Ex1 {
         int lx = xx.length;
         int ly = yy.length;
         if(xx!=null && yy!=null && lx==ly && lx>1 && lx<4) {
-            /** add you code below
 
-             /////////////////// */
+
         }
         return ans;
     }
@@ -159,7 +158,7 @@ public class Ex1 {
         else {
             ans = x_2;
             for(int i=0; ans >= x_1; i--) {
-                ans = x_1 + (i * eps);
+                ans = x_2 + (i * eps);
                 double absDelta = Math.abs(f(p1, ans) - f(p2, ans));
                 if(absDelta < eps) {
                     return ans;
@@ -209,16 +208,28 @@ public class Ex1 {
      */
     public static double area(double[] p1,double[]p2, double x1, double x2, int numberOfTrapezoid) {
         double area = 0;
-
         double dx = (x2-x1) / numberOfTrapezoid, dy1, dy2, A;
+        double x12 = sameValue(p1, p2, x1, x2, EPS);
 
-        for(int i=0; i<numberOfTrapezoid; i++) {
-            dy1 = Math.abs( f(p1, x1+(i*dx)) - f(p2, x1+(i*dx)) );
-            dy2 = Math.abs( f(p1, x1+((i+1)*dx)) - f(p2, x1+((i+1)*dx)) );
-
-            A = 0.5 * dx * (dy1+dy2);
-            area += Math.abs(A);
+        if( (f(p1, x1) - f(p2, x1)) * (f(p1, x2) - f(p2, x2)) < -EPS || (x12 - x2 < -EPS  && x12 - x1> EPS) ) {
+            area  += area(p1, p2, x12, x2, numberOfTrapezoid) + area(p1, p2, x1, x12, numberOfTrapezoid);
         }
+
+        else if( Math.abs(f(p1, x1) - f(p2, x1)) < EPS && Math.abs(f(p1, x2) - f(p2, x2)) < EPS && numberOfTrapezoid == 1) {
+            area += area(p1, p2, x1 + dx, x2, numberOfTrapezoid) + area(p1, p2, x1, x1 + dx, numberOfTrapezoid);
+        }
+
+        else {
+            for(int i=0; i<numberOfTrapezoid; i++) {
+                dy1 = Math.abs( f(p1, x1+(i*dx)) - f(p2, x1+(i*dx)) );
+                dy2 = Math.abs( f(p1, x1+((i+1)*dx)) - f(p2, x1+((i+1)*dx)) );
+
+                A = 0.5 * dx * (dy1+dy2);
+                area += Math.abs(A);
+            }
+            return area;
+        }
+
         return area;
     }
     /**

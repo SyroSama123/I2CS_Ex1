@@ -76,9 +76,16 @@ public class Ex1 {
      */
     public static boolean equals(double[] p1, double[] p2) {
         boolean ans = true;
-        /** add you code below
+        String p1Str = poly(p1), p2Str = poly(p2);
+        int maxDeg = Math.max(polSizeFromString(p1Str) , polSizeFromString(p2Str));
+        double absDelta;
 
-         /////////////////// */
+        for(int i=0; i<maxDeg+1; i++) {
+            absDelta = Math.abs( f(p1, i) - f(p2, i) );
+            if(absDelta >= EPS) {
+                ans = false;
+            }
+        }
         return ans;
     }
 
@@ -97,12 +104,23 @@ public class Ex1 {
 
         else {
             for(int i=1; i <= l; i++) {
-                if(i<l) {
+                if(i<l-1) {
                     if(poly[l - i - 1] > 0) {
                         ans += poly[l - i] + "x^" + (l-i) + " +";
                     }
                     else if (poly[l - i - 1] < 0) {
                         ans += poly[l - i] + "x^" + (l-i) + " ";
+                    }
+                }
+                else if(i==l-1) {
+                    if(poly[l - i - 1] > 0) {
+                        ans += poly[l - i] + "x" + " +";
+                    }
+                    else if (poly[l - i - 1] < 0) {
+                        ans += poly[l - i] + "x" + " ";
+                    }
+                    else {
+                        ans += poly[l - i] + "x";
                     }
                 }
                 else {
@@ -165,11 +183,17 @@ public class Ex1 {
      * @return the length approximation of the function between f(x1) and f(x2).
      */
     public static double length(double[] p, double x1, double x2, int numberOfSegments) {
-        double ans = x1;
-        /** add you code below
+        double length = 0;
 
-         /////////////////// */
-        return ans;
+        double dx = (x2-x1) / numberOfSegments, dy, l;
+
+        for(int i=0; i<numberOfSegments; i++) {
+            dy = f(p, x1+(i*dx)) - f(p, x1+((i+1)*dx));
+            l = Math.sqrt(dy*dy + dx*dx);
+            length += l;
+        }
+
+        return length;
     }
 
     /**
@@ -184,11 +208,18 @@ public class Ex1 {
      * @return the approximated area between the two polynomial functions within the [x1,x2] range.
      */
     public static double area(double[] p1,double[]p2, double x1, double x2, int numberOfTrapezoid) {
-        double ans = 0;
-        /** add you code below
+        double area = 0;
 
-         /////////////////// */
-        return ans;
+        double dx = (x2-x1) / numberOfTrapezoid, dy1, dy2, A;
+
+        for(int i=0; i<numberOfTrapezoid; i++) {
+            dy1 = Math.abs( f(p1, x1+(i*dx)) - f(p2, x1+(i*dx)) );
+            dy2 = Math.abs( f(p1, x1+((i+1)*dx)) - f(p2, x1+((i+1)*dx)) );
+
+            A = 0.5 * dx * (dy1+dy2);
+            area += Math.abs(A);
+        }
+        return area;
     }
     /**
      * This function computes the array representation of a polynomial function from a String
@@ -199,10 +230,41 @@ public class Ex1 {
      * @return
      */
     public static double[] getPolynomFromString(String p) {
-        double [] ans = ZERO;//  -1.0x^2 +3.0x +2.0
-        /** add you code below
+        int polSize = polSizeFromString(p), pow;
+        double [] ans = new double[polSize];//  -1.0x^2 +3.0x +2.0
+        String temp = "";
+        boolean atNumber = false;
 
-         /////////////////// */
+        for(int i=0; i<p.length(); i++) {
+            if( (isNumber(p.charAt(i)) || p.charAt(i) == '-') && !atNumber) {
+                temp += p.charAt(i);
+                atNumber = true;
+            }
+
+            else if(atNumber && (p.charAt(i) == '.' || isNumber(p.charAt(i)))) {
+                temp += p.charAt(i);
+            }
+
+            if(i < p.length() - 2 && atNumber && (p.charAt(i) == 'x' && p.charAt(i+1) == '^')) {
+                pow  = getPowFromString(p , i+2);
+                ans[pow] = Double.parseDouble(temp);
+                temp = "";
+                atNumber = false;
+                i+=3;
+            }
+
+            if(i<p.length() && atNumber && (p.charAt(i) == 'x' && p.charAt(i+1) != '^')) {
+                ans[1] = Double.parseDouble(temp);
+                temp = "";
+                atNumber = false;
+                i+=1;
+            }
+            if(i == p.length()-1 && atNumber) {
+                ans[0] = Double.parseDouble(temp);
+            }
+            /* Finish this later */
+
+        }
         return ans;
     }
     /**
@@ -271,4 +333,99 @@ public class Ex1 {
 
         return ans;
     }
+
+
+    /**
+     *
+     * My helper functions.
+     *
+     * */
+
+
+    /**
+     *
+     * Description
+     *
+     * */
+
+    public static boolean isNumber(char x) {
+        char[] nums = {'0','1','2','3','4','5','6','7','8','9'};
+        boolean ans = false;
+
+        for(int i=0; i<nums.length; i++) {
+            if(nums[i] == x) {
+                ans = true;
+            }
+        }
+
+        return ans;
+    }
+
+    /**
+     *
+     * Description
+     *
+     * */
+
+    public static int polSizeFromString(String p) {
+        int size = 0;
+        String temp = "";
+
+        for(int i=0; i<p.length(); i++) {
+            if(p.charAt(i) == 'x') {
+                if(p.charAt(i+1) == '^') {
+                    for(int j=i+2; j< p.length(); j++) {
+                        if(isNumber(p.charAt(j))) {
+                            temp += p.charAt(j);
+                        }
+                        else {
+                            break;
+                        }
+                    }
+                    size = Integer.parseInt(temp) + 1;
+
+                    return size;
+                }
+                else {
+                    size = 2;
+
+                    return size;
+                }
+            }
+            if(i == p.length() - 1) {
+                size = 1;
+            }
+        }
+
+        return size;
+    }
+
+    /**
+     *
+     * Description
+     *
+     * */
+
+    public static int getPowFromString(String p, int index) {
+        int power = 0;
+        String temp = "";
+
+        for(int i = index; i<p.length(); i++) {
+            if(isNumber(p.charAt(i))) {
+                temp += p.charAt(i);
+            }
+            else {
+                break;
+            }
+        }
+
+        power += Integer.parseInt(temp);
+
+        return power;
+    }
+
+
 }
+
+
+

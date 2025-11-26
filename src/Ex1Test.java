@@ -19,6 +19,17 @@ class Ex1Test {
 	static double[] po3 = {2,1,-0.7, -0.02,0.02};
 	static double[] po4 = {-3, 0.61, 0.2};
 
+
+    /**
+     *
+     * ___________________________________________________________________________________________
+     *
+     * My tests:
+     *
+     *
+     * */
+
+
     @Test
     /**
      * My test -- remove this line before submitting
@@ -27,7 +38,7 @@ class Ex1Test {
      */
     void testPoly() {
         double[] p1 = {9.0, 7.3, -2.0, 4.0, -13.25};
-        String polyStr = "-13.25x^4 +4.0x^3 -2.0x^2 +7.3x^1 +9.0";
+        String polyStr = "-13.25x^4 +4.0x^3 -2.0x^2 +7.3x +9.0";
 
         String p1Str = Ex1.poly(p1);
 
@@ -35,6 +46,136 @@ class Ex1Test {
             fail("Strings not equal");
         }
     }
+
+    @Test
+    /**
+     * My test -- remove this line before submitting
+     *
+     * Tests that length() returns correct string.
+     */
+    void testLength() {
+        double[] p1 = {-9, 83.5};
+        int n = 19;
+        double realLength = 167.0119;
+
+        for(int i=0; i<10000; i+=50) {
+            double length = Ex1.length(p1, i, i+2, n*(i+1));
+            boolean isCorrect = Math.abs(length - realLength) < Ex1.EPS;
+            if(!isCorrect) {
+                fail("function failed at i = " + i);
+            }
+        }
+
+    }
+
+    @Test
+    /**
+     * My test -- remove this line before submitting
+     *
+     * Tests that polSizeFromString() returns correct polSize.
+     */
+    void testPolSize() {
+        String poly = "29x^78 + 3";
+
+        int polSize = Ex1.polSizeFromString(poly);
+
+        if(polSize != 79) {
+            fail("polSize is:" + polSize + " and not 79");
+        }
+
+    }
+
+    @Test
+    /**
+     * My test -- remove this line before submitting
+     *
+     * Tests that equals() returns correct boolean value.
+     */
+    void testEquals_1() {
+        double[] p1 = {2, 33, -15, 52, -30};
+        double[] p2 = {1, 33, -15, 52, -30};
+        double[] p3 = {2, 33, -15, 52, -30};
+
+        if(Ex1.equals(p1, p2)) {
+           fail("Functions are not equal but func thinks they are");
+        }
+        if(!Ex1.equals(p1, p3)) {
+            fail("Functions are equal but func thinks they aren't");
+        }
+
+    }
+
+    @Test
+    /**
+     * My test -- remove this line before submitting
+     *
+     * Tests that getPowFromString() returns correct power.
+     */
+    void testGetPowFromString() {
+        String poly = "29x^78 +12x^32 -2x^23 +3x^2";
+
+        int pow1 = Ex1.getPowFromString(poly, 4);
+        int pow2 = Ex1.getPowFromString(poly, 12);
+        int pow3 = Ex1.getPowFromString(poly, 19);
+        int pow4 = Ex1.getPowFromString(poly, 26);
+
+        assertEquals(pow1 , 78 , Ex1.EPS);
+        assertEquals(pow2 , 32 , Ex1.EPS);
+        assertEquals(pow3 , 23 , Ex1.EPS);
+        assertEquals(pow4 , 2 , Ex1.EPS);
+
+    }
+
+    @Test
+    /**
+     * My test -- remove this line before submitting
+     *
+     * Tests that root_rec() return an x value such that | x - actualRoot | < EPS  .
+     *
+     */
+    void testRoot_Rec() {
+        double[] p1 = {2.0, 3.5, -34.2, 398.345};
+        double actualRoot = -0.132774, rootX = Ex1.root_rec(p1, -0.2, 0, Ex1.EPS);
+
+        double absDelta = Math.abs( rootX - actualRoot );
+
+        if(absDelta >= Ex1.EPS){
+            fail();
+        }
+    }
+
+    @Test
+
+    /**
+     * My test -- remove this line before submitting
+     *
+     * Tests that root_rec() return an x value such that | x - actualRoot | < EPS  .
+     *
+     */
+
+    void testDerivative() {
+        double[] p1 = {2.0, 3.5, -34.2, 398.345}, actualDer = {3.5, -68.4, 1195.035}, der;
+
+        der = Ex1.derivative(p1);
+
+        if(!Ex1.equals(der, actualDer)) {
+            fail("Derivative is incorrect");
+        }
+    }
+
+
+
+    /**
+     *
+     * ___________________________________________________________________________________________
+     *
+     * Original Unchanged tests:
+     *
+     *
+     * */
+
+
+
 
  	@Test
 	/**

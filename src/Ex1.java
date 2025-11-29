@@ -79,12 +79,12 @@ public class Ex1 {
                 double x1 = xx[0], y1 = yy[0];
                 double x2 = xx[1], y2 = yy[1];
 
-                double a = (y2 - y1) / (x2 - x1);   // slope
-                double b = y1 - a * x1;            // intercept
+                double a = (y2 - y1) / (x2 - x1);
+                double b = y1 - a * x1;
 
                 ans = new double[2];
                 ans[0] = b;
-                ans[1] = a; // ax + b
+                ans[1] = a;
             }
 
             else if (lx == 3) {
@@ -101,7 +101,7 @@ public class Ex1 {
                 ans = new double[3];
                 ans[0] = c;
                 ans[1] = b;
-                ans[2] = a;  // ax^2 + bx + c
+                ans[2] = a;
             }
         }
         return ans;

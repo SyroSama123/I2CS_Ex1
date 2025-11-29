@@ -104,6 +104,7 @@ public class Ex1 {
                 ans[2] = a;
             }
         }
+
         return ans;
     }
     /**

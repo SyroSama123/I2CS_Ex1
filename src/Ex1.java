@@ -1,5 +1,3 @@
-import java.util.Arrays;
-
 /**
  * Introduction to Computer Science 2026, Ariel University,
  * Ex1: arrays, static functions and JUnit
@@ -165,7 +163,7 @@ public class Ex1 {
         else {
             for(int i=1; i <= l; i++) {
                 if(i<l-1) {
-                    if(poly[l - i - 1] > 0) {
+                    if(poly[l - i - 1] >= 0) {
                         ans += poly[l - i] + "x^" + (l-i) + " +";
                     }
                     else if (poly[l - i - 1] < 0) {
@@ -191,60 +189,36 @@ public class Ex1 {
         }
         return ans;
     }
+
     /**
-     * Searches for an x-value at which two polynomial functions have (approximately)
-     * the same value within a given tolerance.
+     * Given two polynomial functions (p1,p2), a range [x1,x2] and an epsilon eps.
+     * This function computes an x value (x1<=x<=x2) for which |p1(x) - p2(x)| < eps,
+     * assuming (p1(x1)-p2(x1)) * (p1(x2)-p2(x2)) <= 0.
+     * This function is implemented recursively.
      *
-     * The method evaluates the difference between p1(x) and p2(x) over the interval
-     * [x1, x2], stepping through the range in increments of eps/2. The search direction
-     * (left-to-right or right-to-left) is chosen based on which endpoint has the larger
-     * initial difference. When a point is found where the absolute difference between
-     * the two function values is smaller than eps, that x-value is returned.
-     *
-     * Notes:
-     * - The polynomials are evaluated using the function f().
-     * - The effective step size is eps / 2.
-     * - If no matching value is found, the last checked x-value is returned.
-     * - The order of x1 and x2 does not matter; the method automatically normalizes them.
-     *
-     * @param p1  - first polynomial (coefficients)
-     * @param p2  - second polynomial (coefficients)
-     * @param x1  - start of the interval
-     * @param x2  - end of the interval
-     * @param eps - tolerance for comparing f(p1,x) and f(p2,x)
-     * @return an x-value in [x1, x2] where the two polynomials differ by less than eps,
-     *         or the last tested value if no such point is found.
+     * @param p1 - the first polynomial function
+     * @param p2 - the second polynomial function
+     * @param x1 - minimal value of the range
+     * @param x2 - maximal value of the range
+     * @param eps - epsilon (positive small value, often 10^-3 or 10^-6)
+     * @return an x value (x1<=x<=x2) for which |p1(x) - p2(x)| < eps.
      */
+
     public static double sameValue(double[] p1, double[] p2, double x1, double x2, double eps) {
-        double ans;
-        double x_1 = Math.min(x1, x2), x_2 = Math.max(x1, x2);
-        double deltaY1 = Math.abs( f(p1, x_1) - f(p2, x_1) ), deltaY2 = Math.abs( f(p1, x_2) - f(p2, x_2) );
-        eps = eps/2;
+        double deltaF1 = f(p1, x1) - f(p2, x1), x12 = (x1 + x2) / 2;
+        double deltaF12 = f(p1, x12) - f(p2, x12);
 
-        if(deltaY1 > deltaY2) {
-            ans = x_1;
-            for(int i=0; ans <= x_2; i++) {
-                ans = x_1 + (i * eps);
-                double absDelta = Math.abs(f(p1, ans) - f(p2, ans));
-                if(absDelta < eps) {
-                    return ans;
-                }
-            }
-        }
-        else {
-            ans = x_2;
-            for(int i=0; ans >= x_1; i--) {
-                ans = x_2 + (i * eps);
-                double absDelta = Math.abs(f(p1, ans) - f(p2, ans));
-                if(absDelta < eps) {
-                    return ans;
-                }
-            }
+        if (Math.abs(deltaF12) < eps) {
+            return x12;
         }
 
-
-        return ans;
+        if (deltaF1 * deltaF12 <= 0) {
+            return sameValue(p1, p2, x1, x12, eps);
+        } else {
+            return sameValue(p1, p2, x12, x2, eps);
+        }
     }
+
     /**
      * Computes the approximate arc length of a polynomial function over an interval.
      *
@@ -282,40 +256,36 @@ public class Ex1 {
     /**
      * Computes the approximate area between two polynomial functions over an interval.
      *
-     * The method estimates the enclosed area between p1(x) and p2(x) over [x1, x2]
-     * using the trapezoidal rule. If the functions cross within the interval, the
-     * method automatically detects the intersection point and recursively splits
-     * the interval so that each sub-interval contains no sign changes. This ensures
-     * correct area computation even when the ordering of the curves switches.
+     * The method divides the interval [x1, x2] into a given number of equal trapezoids
+     * and approximates the total area by summing the areas of trapezoids formed between
+     * the two polynomial curves. If the polynomials cross within the interval, the method
+     * recursively splits the interval at the intersection point to ensure correct calculation.
      *
-     * For each trapezoid the method evaluates:
-     *   dy1 = |p1(x) - p2(x)| at the left endpoint
-     *   dy2 = |p1(x) - p2(x)| at the right endpoint
-     *   area += 0.5 * dx * (dy1 + dy2)
+     * For each trapezoid, the method computes:
+     *   dy1 = vertical distance between polynomials at the left endpoint
+     *   dy2 = vertical distance between polynomials at the right endpoint
+     *   A   = 0.5 * dx * (dy1 + dy2)   // area of the trapezoid
+     *   area += |A|
      *
+     * If the polynomials cross, the interval is split at the crossing point and the areas
+     * of the subintervals are computed recursively to avoid negative contributions.
      *
-     * @param p1                 - first polynomial (coefficients)
-     * @param p2                 - second polynomial (coefficients)
-     * @param x1                 - start of the interval
-     * @param x2                 - end of the interval
-     * @param numberOfTrapezoid - a natural number representing the number of Trapezoids between x1 and x2.
-     * @return the approximate enclosed area between the two curves on [x1, x2]
+     * @param p1                  - coefficients of the first polynomial
+     * @param p2                  - coefficients of the second polynomial
+     * @param x1                  - start of the interval
+     * @param x2                  - end of the interval
+     * @param numberOfTrapezoid   - number of trapezoids used in the approximation
+     * @return the approximate area between the two polynomials over [x1, x2]
      */
+
 
     public static double area(double[] p1,double[]p2, double x1, double x2, int numberOfTrapezoid) {
         double area = 0;
         double dx = (x2-x1) / numberOfTrapezoid, dy1, dy2, A;
-        double x12 = sameValue(p1, p2, x1, x2, EPS);
 
-        if( (f(p1, x1) - f(p2, x1)) * (f(p1, x2) - f(p2, x2)) < -EPS || (x12 - x2 < -EPS  && x12 - x1> EPS) ) {
-            area  += area(p1, p2, x12, x2, numberOfTrapezoid) + area(p1, p2, x1, x12, numberOfTrapezoid);
-        }
+        double deltaY1 = f(p1, x1) - f(p2, x1), deltaY2 = f(p1, x2) - f(p2, x2);
 
-        else if( Math.abs(f(p1, x1) - f(p2, x1)) < EPS && Math.abs(f(p1, x2) - f(p2, x2)) < EPS && numberOfTrapezoid == 1) {
-            area += area(p1, p2, x1 + dx, x2, numberOfTrapezoid) + area(p1, p2, x1, x1 + dx, numberOfTrapezoid);
-        }
-
-        else {
+        if(deltaY1*deltaY2 >= 0) {
             for(int i=0; i<numberOfTrapezoid; i++) {
                 dy1 = Math.abs( f(p1, x1+(i*dx)) - f(p2, x1+(i*dx)) );
                 dy2 = Math.abs( f(p1, x1+((i+1)*dx)) - f(p2, x1+((i+1)*dx)) );
@@ -323,11 +293,16 @@ public class Ex1 {
                 A = 0.5 * dx * (dy1+dy2);
                 area += Math.abs(A);
             }
-            return area;
         }
 
+        else {
+            double x12 = sameValue(p1, p2, x1, x2, EPS);
+            area += area(p1, p2, x1, x12, numberOfTrapezoid) + area(p1, p2, x12, x2, numberOfTrapezoid);
+        }
         return area;
     }
+
+
     /**
      * This function computes the array representation of a polynomial function from a String
      * representation.
@@ -434,8 +409,15 @@ public class Ex1 {
      */
     public static double[] mul(double[] p1, double[] p2) {
         int l1 = p1.length, l2 = p2.length;
-        double [] ans = new double[l1+l2+1];//
-        double [][] pArr = new double[l1][l1+l2+1];
+
+        if(l1 == 0 || l2 ==0) {
+            return new double[] {};
+        }
+
+        double [] ans = new double[l1+l2-1];//
+        double [][] pArr = new double[l1][l1+l2-1];
+
+
 
         for(int i=0; i<l1; i++) {
             for(int j=0; j<l2; j++) {

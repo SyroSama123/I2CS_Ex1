@@ -20,6 +20,22 @@ class Ex1Test {
 	static double[] po4 = {-3, 0.61, 0.2};
 
 
+    /**
+     * JUnit test for isSameArray().
+     *
+     * Checks whether two arrays of doubles are equal within a given tolerance.
+     *
+     * The method compares each corresponding element of arr1 and arr2. If the absolute
+     * difference between any pair of elements is greater than or equal to Ex1.EPS, or
+     * if the arrays have different lengths, the arrays are considered not equal.
+     *
+     *
+     * @param arr1 - first array of doubles
+     * @param arr2 - second array of doubles
+     * @return true if both arrays have the same length and all elements are equal
+     *         within the EPS tolerance, false otherwise
+     */
+
     boolean isSameArray(double[] arr1, double[] arr2) {
         boolean ans = true;
 
@@ -37,20 +53,16 @@ class Ex1Test {
         return ans;
     }
 
-    /**
-     *
-     * ___________________________________________________________________________________________
-     *
-     * My tests:
-     *
-     *
-     * */
-
 
     @Test
 
     /**
+     * JUnit test for isSameArray().
      *
+     * Tests that the function returns correct boolean value in each of the following cases:
+     *  1. Two identical arrays should be considered equal - should return true.
+     *  2. Arrays that differ only slightly (within EPS) should be considered equal - should return true.
+     *  3. Arrays of different lengths should be considered not equal - should return false.
      */
 
     void testIsSameArray() {
@@ -69,28 +81,47 @@ class Ex1Test {
 
 
     @Test
+
     /**
-     * My test -- remove this line before submitting
+     * JUnit test for Ex1.poly().
      *
-     * Tests that Poly() returns correct string.
+     * Tests that the function correctly converts an array of polynomial coefficients into a string in the following cases:
+     *  1. Empty array - should return "0".
+     *  2. Single coefficient - should return the coefficient as a string.
+     *  3. Linear polynomial - should return the correct "ax + b" format.
+     *  4. Quadratic polynomial  - should return the correct "ax^2 + bx + c" format.
+     *  5. Polynomial with negative coefficients - ensures negative signs are correctly formatted.
+     *  6. Polynomial with zero coefficients in the middle - ensures zero coefficients are included in the string.
+     *
+     * Each assertion includes a message describing the specific case being tested.
+     *
      */
+
     void testPoly() {
-        double[] p1 = {9.0, 7.3, -2.0, 4.0, -13.25};
-        String polyStr = "-13.25x^4 +4.0x^3 -2.0x^2 +7.3x +9.0";
+        double[] emptyPoly = {}, singleCoefPoly = {5}, linearPoly = {1, 2}, quadPoly = {1, 2, 3}, negPoly = {1, -2, 3}, contZeroPoly = {1, 0, 3};
 
-        String p1Str = Ex1.poly(p1);
+        assertEquals("0", Ex1.poly(emptyPoly), "Empty array should return 0");
+        assertEquals("5.0", Ex1.poly(singleCoefPoly), "Single coefficient should return just the number");
+        assertEquals("2.0x +1.0", Ex1.poly(linearPoly), "Linear polynomial failed");
+        assertEquals("3.0x^2 +2.0x +1.0", Ex1.poly(quadPoly), "Quadratic polynomial failed");
+        assertEquals("3.0x^2 -2.0x +1.0", Ex1.poly(negPoly), "Polynomial with negative coefficient failed");
+        assertEquals("3.0x^2 +0.0x +1.0", Ex1.poly(contZeroPoly), "Polynomial with zero coefficient failed");
 
-        if(!p1Str.equals(polyStr)) {
-            fail("Strings not equal");
-        }
     }
 
+
     @Test
+
     /**
-     * My test -- remove this line before submitting
+     * JUnit test for Ex1.length().
      *
-     * Tests that length() returns correct string.
+     * Tests that the function correctly approximates the arc length of a polynomial over an interval using a segmented approach in the following cases:
+     *  1. Linear polynomial with varying starting points (i from 0 to 10000 in steps of 50) - ensures that the computed length is within Ex1.EPS of the expected value.
+     *
+     * The test fails if the calculated length deviates from the expected value by more than Ex1.EPS at any iteration.
+     *
      */
+
     void testLength() {
         double[] p1 = {-9, 83.5};
         int n = 19;
@@ -107,11 +138,17 @@ class Ex1Test {
     }
 
     @Test
+
     /**
-     * My test -- remove this line before submitting
+     * JUnit test for Ex1.polSizeFromString().
      *
-     * Tests that polSizeFromString() returns correct polSize.
+     * Tests that the function correctly determines the size of the polynomial (maximum exponent + 1) in the following case:
+     *  1. Polynomial string "ax^n + .... + z" - should return n+1 as the size of the polynomial array.
+     *
+     * The test fails if the returned size does not match the expected value.
+     *
      */
+
     void testPolSize() {
         String poly = "29x^78 + 3";
 
@@ -124,17 +161,24 @@ class Ex1Test {
     }
 
     @Test
+
     /**
-     * My test -- remove this line before submitting
+     * JUnit test for Ex1.equals().
      *
-     * Tests that equals() returns correct boolean value.
+     * Tests that the function correctly determines whether two polynomials are equal in the following cases:
+     *  1. Polynomials with different first coefficients but identical remaining coefficients - should return false.
+     *  2. Polynomials that are exactly equal - should return true.
+     *
+     * The test fails if Ex1.equals incorrectly reports equality or inequality.
+     *
      */
-    void testEquals_1() {
+
+    void testEquals_() {
         double[] p1 = {2, 33, -15, 52, -30};
         double[] p2 = {1, 33, -15, 52, -30};
         double[] p3 = {2, 33, -15, 52, -30};
 
-        if(Ex1.equals(p1, p2)) {
+        if(Ex1.equals(p1 , p2)) {
            fail("Functions are not equal but func thinks they are");
         }
         if(!Ex1.equals(p1, p3)) {
@@ -144,11 +188,15 @@ class Ex1Test {
     }
 
     @Test
+
     /**
-     * My test -- remove this line before submitting
+     * JUnit test for Ex1.getPowFromString().
      *
-     * Tests that getPowFromString() returns correct power.
+     * Tests that the function correctly extracts the exponent from a polynomial string at given indices.
+     * Each assertion verifies that the returned exponent matches the expected value within Ex1.EPS tolerance.
+     *
      */
+
     void testGetPowFromString() {
         String poly = "29x^78 +12x^32 -2x^23 +3x^2";
 
@@ -165,12 +213,15 @@ class Ex1Test {
     }
 
     @Test
+
     /**
-     * My test -- remove this line before submitting
+     * JUnit test for Ex1.root_rec().
      *
-     * Tests that root_rec() return an x value such that | x - actualRoot | < EPS  .
+     * Tests that the function correctly computes a root of a polynomial using a recursive method.
+     * The test fails if the computed root deviates from the expected root by more than Ex1.EPS.
      *
      */
+
     void testRoot_Rec() {
         double[] p1 = {2.0, 3.5, -34.2, 398.345};
         double actualRoot = -0.132774, rootX = Ex1.root_rec(p1, -0.2, 0, Ex1.EPS);
@@ -178,16 +229,17 @@ class Ex1Test {
         double absDelta = Math.abs( rootX - actualRoot );
 
         if(absDelta >= Ex1.EPS){
-            fail();
+            fail("Function returned an incorrect root.");
         }
     }
 
     @Test
 
     /**
-     * My test -- remove this line before submitting
+     * JUnit test for Ex1.derivative().
      *
-     * Tests that root_rec() return an x value such that | x - actualRoot | < EPS  .
+     * Tests that the function correctly computes the derivative of a polynomial represented as an array of coefficients.
+     * The test fails if the computed derivative does not match the expected derivative.
      *
      */
 
@@ -205,19 +257,257 @@ class Ex1Test {
     @Test
 
     /**
+     *  JUnit test for Ex1.PolynomfromPoints().
      *
-     *
+     *  Tests that the function returns the correct polynomial for each of the following cases:
+     *   1. 2 points given - returns a linear polynomial {a,b}.
+     *   2. 3 points given - returns a quadratic polynomial {a,b,c}.
+     *   3. Array xx and yy are not of equal size - returns null.
+     *   4. More than 3 points given - returns null.
      *
      * */
 
     void testPolynomFromPoints() {
-        double[] xx = {-1.34403, 0.74403, -0.3}, yy = {0, 0, -2.725}, actualPoly = {-2.5, 1.5, 2.5};
-        double[] polyFromPoints = Ex1.PolynomFromPoints(xx, yy);
+        double[] x3x = {-1.34403, 0.74403, -0.3}, y3y = {0, 0, -2.725}, actualPoly3P = {-2.5, 1.5, 2.5};
+        double[] polyFrom3Points = Ex1.PolynomFromPoints(x3x, y3y);
 
-        if(!isSameArray(actualPoly, polyFromPoints)) {
-            fail("Calculated polynome is incorrect.");
+        double[] x2x = {2,6}, y2y = {2, 6}, actualPoly2P = {0,1};
+        double[] polyFrom2Points = Ex1.PolynomFromPoints(x2x, y2y);
+        double[] polyFrom2_3Points = Ex1.PolynomFromPoints(x2x, y3y);
+
+        if(!isSameArray(actualPoly3P, polyFrom3Points)) {
+            fail("Calculated polynome (quadratic) is incorrect.");
         }
+        if(!isSameArray(actualPoly2P, polyFrom2Points)) {
+            fail("Calculated polynome (linear) is incorrect.");
+        }
+        if(polyFrom2_3Points != null) {
+            fail("Function should return null.");
+        }
+
     }
+
+    @Test
+
+    /**
+     * JUnit test for Ex1.getPolynomFromString().
+     *
+     * Tests that the function correctly parses a polynomial string into an array of coefficients in the following cases:
+     *  1. Linear polynomial (bx +a) - returns {a, b}.
+     *  2. Quadratic polynomial (cx^2 +bx +c) - returns {a, b, c}.
+     *  3. Constant polynomial (a) - returns {a}.
+     *  4. Cubic polynomial with negative coefficients (dx^3 + cx^2 -bx -c) - returns {-a, -b, c, d}.
+     *  5. Polynomial with floating point coefficients (c.fffx^2 +d.FFx +a) - returns {a, d.FF, c.fff}.
+     *
+     */
+
+    void testGetPolynomFromString() {
+
+        double[] expectedLinear = {3.0, 2.0};
+        assertArrayEquals(expectedLinear, Ex1.getPolynomFromString("2x +3"), Ex1.EPS);
+
+        double[] expectedQuadratic = {2.0, 3.0, -1.0};
+        assertArrayEquals(expectedQuadratic, Ex1.getPolynomFromString("-1x^2 +3x +2"), Ex1.EPS);
+
+        double[] expectedConstant = {5.0};
+        assertArrayEquals(expectedConstant, Ex1.getPolynomFromString("5"), Ex1.EPS);
+
+        double[] expectedCubic = {-1.0, 4.0, 0.0, -2.0};
+        assertArrayEquals(expectedCubic, Ex1.getPolynomFromString("-2x^3 +0x^2 +4x -1"), Ex1.EPS);
+
+        double[] expectedFloat = {3.0, -1.25, 0.5};
+        assertArrayEquals(expectedFloat, Ex1.getPolynomFromString("0.5x^2 -1.25x +3.0"), Ex1.EPS);
+
+    }
+
+
+
+    @Test
+
+    /**
+     * JUnit test for Ex1.add().
+     *
+     * Tests that the function correctly adds two polynomials represented as arrays of coefficients in the following cases:
+     *  1. Polynomials of equal length - sums each corresponding coefficient.
+     *  2. First polynomial longer than second - sums overlapping coefficients and appends remaining coefficients from the first polynomial.
+     *  3. Second polynomial longer than first - sums overlapping coefficients and appends remaining coefficients from the second polynomial.
+     *  4. One or both polynomials are empty arrays - returns the non-empty polynomial or an empty array if both are empty.
+     *
+     */
+
+    void testAdd_() {
+
+        double[] p1 = {1, 2, 3};
+        double[] p2 = {4, 5, 6};
+        double[] expectedEqual = {5, 7, 9};
+        assertArrayEquals(expectedEqual, Ex1.add(p1, p2), Ex1.EPS);
+
+        double[] p3 = {1, 2, 3, 4};
+        double[] p4 = {5, 6};
+        double[] expectedFirstLonger = {6, 8, 3, 4};
+        assertArrayEquals(expectedFirstLonger, Ex1.add(p3, p4), Ex1.EPS);
+
+        double[] p5 = {1, 2};
+        double[] p6 = {3, 4, 5};
+        double[] expectedSecondLonger = {4, 6, 5};
+        assertArrayEquals(expectedSecondLonger, Ex1.add(p5, p6), Ex1.EPS);
+
+        double[] empty = {};
+        double[] nonEmpty = {7, 8, 9};
+        assertArrayEquals(nonEmpty, Ex1.add(empty, nonEmpty), Ex1.EPS);
+        assertArrayEquals(nonEmpty, Ex1.add(nonEmpty, empty), Ex1.EPS);
+        assertArrayEquals(empty, Ex1.add(empty, empty), Ex1.EPS);
+    }
+
+
+    @Test
+
+    /**
+     * JUnit test for Ex1.mul().
+     *
+     * Tests that the function correctly multiplies two polynomials represented as arrays of coefficients in the following cases:
+     *  1. Polynomials of equal length (e.g., {1,2} * {3,4}) - returns {3,10,8}.
+     *  2. First polynomial longer than second (e.g., {1,2,3} * {4,5}) - returns {4,13,22,15}.
+     *  3. Second polynomial longer than first (e.g., {2,1} * {1,2,3}) - returns {2,5,8,3}.
+     *  4. One or both polynomials are empty arrays - returns an empty array.
+     *  5. Polynomials with negative or floating-point coefficients.
+     *
+     */
+
+
+    void testMul() {
+        double[] p1 = {1, 2};
+        double[] p2 = {3, 4};
+        double[] expectedEqual = {3, 10, 8}; // 1*3 + (1*4 + 2*3)x + 2*4 x^2
+        assertArrayEquals(expectedEqual, Ex1.mul(p1, p2), Ex1.EPS);
+
+        double[] p3 = {1, 2, 3};
+        double[] p4 = {4, 5};
+        double[] expectedFirstLonger = {4, 13, 22, 15}; // (manual calculation)
+        assertArrayEquals(expectedFirstLonger, Ex1.mul(p3, p4), Ex1.EPS);
+
+        double[] p5 = {2, 1};
+        double[] p6 = {1, 2, 3};
+        double[] expectedSecondLonger = {2, 5, 8, 3};
+        assertArrayEquals(expectedSecondLonger, Ex1.mul(p5, p6), Ex1.EPS);
+
+        double[] empty = {};
+        double[] nonEmpty = {1, 2};
+        assertArrayEquals(empty, Ex1.mul(empty, nonEmpty), Ex1.EPS);
+        assertArrayEquals(empty, Ex1.mul(nonEmpty, empty), Ex1.EPS);
+        assertArrayEquals(empty, Ex1.mul(empty, empty), Ex1.EPS);
+
+        double[] p7 = {0.5, -1};
+        double[] p8 = {2, -0.5};
+        double[] expectedFloat = {1.0, -2.25, 0.5};
+        assertArrayEquals(expectedFloat, Ex1.mul(p7, p8), Ex1.EPS);
+    }
+
+    @Test
+
+    /**
+     * JUnit test for Ex1.area().
+     *
+     * Tests that the function correctly computes the area between two polynomials over a given range using the trapezoidal method in the following cases:
+     *  1. Polynomials do not cross in the interval - area is sum of trapezoids between p1 and p2.
+     *  2. Polynomials cross in the interval - splits at intersection point and sums areas of subintervals.
+     *  3. Polynomials are equal - area is 0.
+     *  4. Polynomials are constant - area equals the absolute difference times the interval length.
+     *
+     */
+
+
+    void testArea_() {
+        double[] f1 = {0,2};
+        double[] f2 = {0,1};
+        double computedArea1 = Ex1.area(f1, f2, 0, 3, 1000);
+        double expectedArea1 = 4.5; // integral of |2x+1 - (x+2)| dx = integral |x-1| dx from 0 to 3
+        assertEquals(expectedArea1, computedArea1, 0.01);
+
+        double[] g1 = {0,1};
+        double[] g2 = {0,0.5};
+        double computedArea2 = Ex1.area(g1, g2, 0, 4, 1000);
+        double expectedArea2 = 4.0; // integral of |x-0.5x| dx = integral of 0.5x dx from 0 to 4
+        assertEquals(expectedArea2, computedArea2, 0.01);
+
+        double[] h1 = {0,0,1};
+        double[] h2 = {0,0,1};
+        assertEquals(0.0, Ex1.area(h1, h2, -2, 2, 1000), 1e-9);
+
+        double[] c1 = {5};
+        double[] c2 = {2};
+        double expectedArea4 = 9.0; // |5-2|*3
+        assertEquals(expectedArea4, Ex1.area(c1, c2, 0, 3, 1000), 1e-9);
+
+    }
+
+
+    @Test
+
+    /**
+     * JUnit test for Ex1.isNumber().
+     *
+     * Tests that the function correctly identifies numeric characters ('0' to '9') and distinguishes them from non-numeric characters in the following cases:
+     *  1. Characters '0' through '9' - should return true.
+     *  2. Alphabetic characters 'a', 'Z' - should return false.
+     *  3. Special characters '@', '-' - should return false.
+     *  4. Space character ' ' - should return false.
+     *
+     */
+
+    void testIsNumber() {
+        assertTrue(Ex1.isNumber('0'), "Character '" + 0 + "' should be recognized as a number");
+        assertTrue(Ex1.isNumber('1'), "Character '" + 1 + "' should be recognized as a number");
+        assertTrue(Ex1.isNumber('2'), "Character '" + 2 + "' should be recognized as a number");
+        assertTrue(Ex1.isNumber('3'), "Character '" + 3 + "' should be recognized as a number");
+        assertTrue(Ex1.isNumber('4'), "Character '" + 4 + "' should be recognized as a number");
+        assertTrue(Ex1.isNumber('5'), "Character '" + 5 + "' should be recognized as a number");
+        assertTrue(Ex1.isNumber('6'), "Character '" + 6 + "' should be recognized as a number");
+        assertTrue(Ex1.isNumber('7'), "Character '" + 7 + "' should be recognized as a number");
+        assertTrue(Ex1.isNumber('8'), "Character '" + 8 + "' should be recognized as a number");
+        assertTrue(Ex1.isNumber('9'), "Character '" + 9 + "' should be recognized as a number");
+
+        assertFalse(Ex1.isNumber('a'));
+        assertFalse(Ex1.isNumber('Z'));
+        assertFalse(Ex1.isNumber('@'));
+        assertFalse(Ex1.isNumber('-'));
+        assertFalse(Ex1.isNumber(' '));
+    }
+
+
+    @Test
+
+    /**
+     * JUnit test for Ex1.sameValue().
+     *
+     * Tests that the function correctly finds an x-value within a given interval where two polynomials have approximately the same value.
+     *
+     * The test fails if the absolute difference between the polynomials at the returned x exceeds Ex1.EPS.
+     *
+     */
+
+    void testSameValue() {
+        double[] p1 = {0, 1};
+        double[] p2 = {0, 0.5};
+        double x1 = Ex1.sameValue(p1, p2, 0, 4, Ex1.EPS);
+        assertTrue(Math.abs(Ex1.f(p1, x1) - Ex1.f(p2, x1)) < Ex1.EPS, "Returned x does not satisfy f(p1,x1) ≈ f(p2,x1)");
+
+        double[] p3 = {-1, 1};
+        double[] p4 = {-0.5, 0.5};
+        double x2 = Ex1.sameValue(p3, p4, 0, 4, Ex1.EPS);
+        assertTrue(Math.abs(Ex1.f(p3, x2) - Ex1.f(p4, x2)) < Ex1.EPS, "Returned x does not satisfy f(p3,x2) ≈ f(p4,x2)");
+    }
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      *
@@ -413,6 +703,7 @@ class Ex1Test {
 		double area = 58.5658;
 		assertEquals(a1,area, Ex1.EPS);
 	}
+
 
 
 

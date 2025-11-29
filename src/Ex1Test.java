@@ -20,6 +20,23 @@ class Ex1Test {
 	static double[] po4 = {-3, 0.61, 0.2};
 
 
+    boolean isSameArray(double[] arr1, double[] arr2) {
+        boolean ans = true;
+
+        if(arr1.length == arr2.length) {
+            for(int i=0; i<arr1.length; i++) {
+                if( Math.abs( arr1[i] - arr2[i] ) >= Ex1.EPS) {
+                    ans = false;
+                }
+            }
+        }
+        else {
+            ans = false;
+        }
+
+        return ans;
+    }
+
     /**
      *
      * ___________________________________________________________________________________________
@@ -28,6 +45,27 @@ class Ex1Test {
      *
      *
      * */
+
+
+    @Test
+
+    /**
+     *
+     */
+
+    void testIsSameArray() {
+        double[] arr1 = {-3.234, 0, 5.2, 3.456, 2, 1}, arr2 = {-3.234, 0, 5.2, 3.456, 2, 1}, arr3 = {-3.234, 0, 5.2, 3.456, 2, 1, 0}, arr4 = {-3.233, 0, 5.2, 3.455, 2, 1};
+
+        if(!isSameArray(arr1, arr2)) {
+            fail("Arrays are equal but function thinks they're not.");
+        }
+        if(!isSameArray(arr1, arr4)) {
+            fail("Arrays are equal (to EPS) but function thinks they're not.");
+        }
+        if(isSameArray(arr1, arr3)) {
+            fail("Arrays are not equal but function thinks they are.");
+        }
+    }
 
 
     @Test
@@ -158,12 +196,28 @@ class Ex1Test {
 
         der = Ex1.derivative(p1);
 
-        if(!Ex1.equals(der, actualDer)) {
+        if (!isSameArray(der, actualDer)) {
             fail("Derivative is incorrect");
         }
     }
 
 
+    @Test
+
+    /**
+     *
+     *
+     *
+     * */
+
+    void testPolynomFromPoints() {
+        double[] xx = {-1.34403, 0.74403, -0.3}, yy = {0, 0, -2.725}, actualPoly = {-2.5, 1.5, 2.5};
+        double[] polyFromPoints = Ex1.PolynomFromPoints(xx, yy);
+
+        if(!isSameArray(actualPoly, polyFromPoints)) {
+            fail("Calculated polynome is incorrect.");
+        }
+    }
 
     /**
      *
@@ -359,4 +413,9 @@ class Ex1Test {
 		double area = 58.5658;
 		assertEquals(a1,area, Ex1.EPS);
 	}
+
+
+
+
+
 }
